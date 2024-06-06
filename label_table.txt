@@ -1,0 +1,3 @@
+main0x00400000
+while_loop0x00400000
+exit_loop0x00400030
