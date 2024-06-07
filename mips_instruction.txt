@@ -1,0 +1,18 @@
+main:
+	# i ~ $s0
+	# $s3 = &a[0]
+while_loop:
+	addi $t1, $zero, 1	# $t1 = 1
+	beq $t0, $t1, exit_loop	# If $t0 = 1, j exit_loop (means $s0 <= 0)
+
+	add $t4, $zero, $s0	# $t4 = i
+	add $t4, $s3, $t4 	# $t4 = &a[0] + 4 * i = &a[i]
+	lw $s2, 0($t4) 		# $s2 <- a[i]
+	addi $t4, $t4, 4 	# $t4 = &a[i] + 4 = &a[i + 1]
+	sw $s2, 0($t4)		# $t4 (&a[i + 1]) <- a[i] * 8
+
+	addi $s0, $s0, -1
+	j while_loop
+exit_loop:
+	addi $t0, $zero, 5
+	sw $t0, 0($s3)		# $s3 (&a[0]) <- 5
