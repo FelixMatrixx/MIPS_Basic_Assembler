@@ -3,6 +3,21 @@ from number_manipulate import *
 import re
 
 def GenerateBinaryForR(line):
+    """
+    Generate the binary representation of an R-type MIPS instruction.
+
+    Args:
+        line (str): A single line string representing the R-type instruction
+                    in the format "instruction Rd, Rs, Rt".
+
+    Returns:
+        str: A 32-bit binary string representing the machine code of the given R-type instruction.
+
+    Example:
+        line = "add $t1, $t2, $t3"
+        result = GenerateBinaryForR(line)
+        # result should be a 32-bit binary string.
+    """
     # R-Type instruction
     # instruction Rd, Rs, Rt
     # index:    0, 1,  2,  3,
@@ -21,7 +36,6 @@ def GenerateBinaryForR(line):
     for idx, token in enumerate(tokens):
         if "," in token:
             tokens[idx] = tokens[idx].replace(",", "")
-
 
     instruction, rd, rs, rt = tokens
 
@@ -46,18 +60,26 @@ def GenerateBinaryForR(line):
     return machine_code     # 32-bit binary string
 
 def GenerateBinaryForI(line):
+    """
+    Generate the binary representation of an I-type MIPS instruction.
 
-    # I-Type instruction
-    # instruction rt, rs, imm
-    # index:    0, 1,  2,  3,
+    Args:
+        line (str): A single line string representing the I-type instruction
+                    in the format "instruction rt, rs, imm" or "instruction rt, imm(rs)".
 
-    # Machine code
-    # Opcode Rs Rt Imm
+    Returns:
+        str: A 32-bit binary string representing the machine code of the given I-type instruction.
+
+    Example:
+        line = "addi $t1, $t2, 10"
+        result = GenerateBinaryForI(line)
+        # result should be a 32-bit binary string.
+    """
     machine_code = ""
 
     tokens = line.split(" ")
 
-    # INSTRUCTION_DECODED[key] = ['Type', 'Opcode', 'Func']
+    # INSTRUCTION_DECODED[instruction] = ['Type', 'Opcode', 'Func']
     # Func will be "N/A" for I-Type
     type, opcode, func = INSTRUCTION_DECODED[tokens[0]]
 
@@ -67,8 +89,8 @@ def GenerateBinaryForI(line):
             tokens[idx] = tokens[idx].replace(",", "")
 
     # Tokens could have either 3 parts or 4 parts
-    # 3 parts for instruction like sw, lw, ...
-    # 4 parts for instruction like beq, add, ...
+    # 3 parts: instruction rt, imm(rs)
+    # 4 parts: instruction instruction rt, rs, imm
 
     rt = MIPS_REGISTERS[tokens[1]]
     if len(tokens) == 4:
@@ -108,25 +130,38 @@ def GenerateBinaryForI(line):
     return machine_code     # 32-bit binary string
 
 def GenerateBinaryForJ(line):
+    """
+    Generate the binary representation of a J-type MIPS instruction.
+
+    Args:
+        line (str): A single line string representing the J-type instruction
+                    in the format "instruction label".
+
+    Returns:
+        str: A 32-bit binary string representing the machine code of the given J-type instruction.
+
+    Example:
+        line = "j label"
+        result = GenerateBinaryForJ(line)
+        # result should be a 32-bit binary string.
+    """
     # J-Type instruction
     # instruction label
     # index:    0,    1, 
 
-    # Machine code
-    # Opcode Immediate
+    # Machine code = Opcode + Immediate
     machine_code = ""
 
     tokens = line.split(" ")
 
     # INSTRUCTION_DECODED[key] = ['Type', 'Opcode', 'Func']
-    # Func will be "N/A" for I-Type
+    # Func will be "N/A" for J-Type
     type, opcode, func = INSTRUCTION_DECODED[tokens[0]]
 
     # Delete comma
     for idx, token in enumerate(tokens):
         if "," in token:
             tokens[idx] = tokens[idx].replace(",", "")
-
 
     instruction, label = tokens
     label_address_hex = LABELS_TABLE[label] # Results is in Hex
