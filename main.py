@@ -8,7 +8,7 @@ def main():
     processed_lines = FirstPass(lines)
 
     # Temporary file to store precessed lines
-    WriteFile("temp_instruction.txt", processed_lines)
+    WriteFile("cleaned_instruction.txt", processed_lines)
     
     machine_code_lines = SecondPass(processed_lines)
     WriteFile("machine_code.txt", machine_code_lines)
